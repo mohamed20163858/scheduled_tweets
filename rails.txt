@@ -1,0 +1,59 @@
+# shell comands notes 
+bundle // will install all files from gemfile 
+rails new app_name // will create new app folder with all setup files 
+rails s or server // will run the rails  
+rails g or generate model table_name col1:col1_type .....coln:coln_type // will generate table for u 
+rails db:migrate // will run the transition and make your queries work 
+rails c or console // will open console for you to interact with 
+rails db:rollback // will undo the last migrate 
+rails db:migrate:redo // will undo the last migrate then do the current one
+rails route // check rails route  
+
+# rails console coomands 
+User.all // will list all users inside an array 
+User.create({col_name: "value",....}) // will insert records inside the table 
+User.first // will return the first record 
+User.last // will return the last record 
+// we can do that 
+user = User.create({col_name: "value",....}) 
+user.errors // will return any errors existed 
+
+# rails codes 
+
+# add new page 
+first go to routes.rb in config folder and add this line 
+get "about", to: "about#index" // means when user type homepage/about go to controller/about_controller.rb 
+// then use index method. 
+// this how about_controller.rb should look like 
+class AboutController < ApplicationController
+  def index 
+  end
+end
+// the views it gets it will go to views/about/index.html.erb 
+root or get "" to: "main#index" // means main is the main or root app page
+<%= render partial: "file_path" %> // means render the file and it is partial so its name should
+// begin with _file_name
+has_secure_password // this method will force model to  use crypto to save password 
+validates :email, presence: true, format: {with: 'regular expression', message: 'your messageUser'} // will make sure email should exist 
+// another easy way to do it just go to migrates/time_create_users.rb then type , null: false to force email to not has null result 
+
+// here is an example to show how form work 
+<h1>Sign Up</h1>
+<%= form_with model: @user, url: sign_up_path do |form| %>
+<div class="mb-3">
+  <%= form.label :email %>
+  <%= form.text_field :email, class: "form-control" %>
+</div>
+<div class="mb-3">
+  <%= form.label :password %>
+  <%= form.text_field :password, class: "form-control" %>
+</div>
+<div class="mb-3">
+  <%= form.label :password_confirmation %>
+  <%= form.text_field :password_confirmation, class: "form-control" %>
+</div>
+<div class="mb-3">
+<%= form.submit "Sign Up", class:"btn btn-primary"%>
+</div>
+<% end %>
+
