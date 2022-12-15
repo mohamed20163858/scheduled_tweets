@@ -127,4 +127,18 @@ class CreateProducts < ActiveRecord::Migration[7.0]
   end
 end
 
+// Querying database with Active Record 
+Book.where("title = ?", params[:title])
+Book.order(title: :desc)
+Book.limit(10)
+Customer.limit(5).offset(30)
+User.limit(7).order(created_at: :asc)
+Customer.find(10)
+customer = Customer.take
+Customer.find_by first_name: 'Lifo'
+Customer.find_by first_name: 'Jon'
+// all methods find , take , first , last can take numerical values 
+
+
+
 
