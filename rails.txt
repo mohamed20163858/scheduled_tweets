@@ -141,4 +141,123 @@ Customer.find_by first_name: 'Jon'
 
 
 
+// ordering 
+Book.order(:created_at)
+# OR
+Book.order("created_at")
+Book.order(created_at: :desc)
+# OR
+Book.order(created_at: :asc)
+# OR
+Book.order("created_at DESC")
+# OR
+Book.order("created_at ASC")
+Book.order(title: :asc, created_at: :desc)
+# OR
+Book.order(:title, created_at: :desc)
+# OR
+Book.order("title ASC, created_at DESC")
+# OR
+Book.order("title ASC", "created_at DESC")
+
+Book.order("title ASC").order("created_at DESC")
+
+// order 
+Customer.limit(5) => SELECT * FROM customers LIMIT 5
+Customer.limit(5).offset(30) => SELECT * FROM customers LIMIT 5 OFFSET 30
+customer = Customer.find(10)
+customers = Customer.find([1, 10]) # OR Customer.find(1, 10)
+customer = Customer.take => SELECT * FROM customers LIMIT 1
+customers = Customer.take(2) => SELECT * FROM customers LIMIT 2
+customer = Customer.order(:first_name).first => SELECT * FROM customers ORDER BY customers.first_name ASC LIMIT 1
+Customer.find_by first_name: 'Lifo' === Customer.where(first_name: 'Lifo').take => SELECT * FROM customers WHERE (customers.first_name = 'Lifo') LIMIT 1
+Customer.find_by! first_name: 'does not exist' === Customer.where(first_name: 'does not exist').take!
+// The find_by! method behaves exactly like find_by, except that it will raise ActiveRecord::RecordNotFound if no matching record is found
+Customer.find_by first_name: 'Jon'   
+
+// chains 
+Customer
+  .select('customers.id, customers.last_name, reviews.body')
+  .joins(:reviews)
+  .where('reviews.created_at > ?', 1.week.ago)
+=> 
+SELECT customers.id, customers.last_name, reviews.body
+FROM customers
+INNER JOIN reviews
+  ON reviews.customer_id = customers.id
+WHERE (reviews.created_at > '2019-01-08')
+
+Book
+  .select('books.id, books.title, authors.first_name')
+  .joins(:author)
+  .find_by(title: 'Abstraction and Specification in Program Development')
+=>
+SELECT books.id, books.title, authors.first_name
+FROM books
+INNER JOIN authors
+  ON authors.id = books.author_id
+WHERE books.title = $1 [["title", "Abstraction and Specification in Program Development"]]
+LIMIT 1
+
+User.limit(7).order(created_at: :asc) 
+User.exists? //  check the existence of a table  
+User.exists?(id: [1, 2, 3]) //  check if some users exist 
+// We can even get immediate calculations by passing a column name to count, average, minimum, maximum, or sum like User.average('hours')
+
+User.pluck(:id, :name) 
+
+
+class Author < ApplicationRecord
+  has_many :books
+end
+
+class Book < ApplicationRecord
+  belongs_to :author # table with foreign key
+end
+
+scope :in_print, -> { where(out_of_print: false) }
+Book.out_of_print 
+
+// crud operations
+user = User.create(name: "David", occupation: "Code Artist") //create 
+ 
+//read
+# return a collection with all users
+users = User.all
+# return the first user
+user = User.first
+# return the first user named David
+david = User.find_by(name: 'David')
+# find all users named David who are Code Artists and sort by created_at in reverse chronological order
+users = User.where(name: 'David', occupation: 'Code Artist').order(created_at: :desc)
+// update 
+user = User.find_by(name: 'David')
+user.name = 'Dave'
+user.save
+ # or 
+ user = User.find_by(name: 'David')
+user.update(name: 'Dave')
+User.update_all "max_login_attempts = 3, must_change_password = 'true'" === User.update(:all, max_login_attempts: 3, must_change_password: true)
+
+// delete 
+user = User.find_by(name: 'David')
+user.destroy
+# find and delete all users named David
+User.destroy_by(name: 'David')
+
+# delete all users
+User.destroy_all
+
+
+
+
+
+
+
+
+ 
+
+
+
+
 
